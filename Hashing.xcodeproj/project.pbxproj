@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		DB7532772242982E00871C63 /* Hashing */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Hashing; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB75327A2242982E00871C63 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		DB7532812242986600871C63 /* hash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hash.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				DB75327A2242982E00871C63 /* main.cpp */,
+				DB7532812242986600871C63 /* hash.h */,
 			);
 			path = Hashing;
 			sourceTree = "<group>";
