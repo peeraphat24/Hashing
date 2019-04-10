@@ -48,25 +48,28 @@ class HashTable
     vector<HashEntry> array;
     int currentSize;
     const HashedObj ITEM_NOT_FOUND;
-    int nextPrime(int size);
+    
+    void rehash();
     bool isActive(int currentPos) const;
     int findPos(const HashedObj & x) const;
-    void rehash();
+    
+    int nextPrime(int size);
     int hash( const string & key, int tableSize ) const;
     int hash( int key, int tableSize ) const;
     void print(int tableSize) const;
     int  hash2(int x,int tablesize)const;
     
 };
-
+////////////////////////////////////////create////////////////////////////////////////////////////////
 template <class HashedObj>
 void HashTable<HashedObj>::create(int size)
 {
-    
     array.resize(size);
     makeEmpty();
 }
 
+
+////////////////////////////////////////print///////////////////////////////////////////////////////////////
 
 template <class HashedObj>
 void HashTable<HashedObj>::print()
@@ -83,7 +86,10 @@ void HashTable<HashedObj>::print(int tableSize) const
     for(int i=0;i<tableSize;i++)
     {
         string info = array[i].info==0?"ACTIVE":array[i].info==1?"EMPTY":"DELETED";
-        cout<<"\t------------------------\n\t"<<"["<<setw(4)<<i<<"]["<<setw(7)<<array[i].element<<"]["<<setw(7)<<info <<"]\n";
+        cout<<"\t------------------------\n\t"<<"["<<setw(4)<<i<<"]";
+        if(array[i].info == 0)
+            cout<<"["<<setw(7)<<array[i].element<<"]["<<setw(7)<<info <<"]\n";
+        else cout<<"["<<setw(9)<<"]["<<setw(7)<<info <<"]\n";
     }
     cout<<"\t------------------------\n";
 }
@@ -94,6 +100,7 @@ HashTable<HashedObj>::HashTable( const HashedObj & notFound , int size) : ITEM_N
     makeEmpty();
 }
 
+/////////////////////makeEmpty///////////////////////////
 
 template<class HashedObj>
 void HashTable<HashedObj>::makeEmpty()
@@ -104,6 +111,7 @@ void HashTable<HashedObj>::makeEmpty()
     
 }
 
+//////////////////////find////////////////////////////
 
 template<class HashedObj>
 const HashedObj & HashTable<HashedObj>::find(const HashedObj & x ) const
@@ -111,16 +119,18 @@ const HashedObj & HashTable<HashedObj>::find(const HashedObj & x ) const
     int currentPos = findPos(x);
     return isActive(currentPos) ? array[currentPos].element : ITEM_NOT_FOUND;
 }
+//////////////////////findarray////////////////////////////
 
 template<class HashedObj>
 const HashedObj & HashTable<HashedObj>::findarray(const HashedObj & x ) const
 {
     int currentPos = findPos(x);
     int index = isActive(currentPos) ? currentPos : ITEM_NOT_FOUND;
-    if(index!=ITEM_NOT_FOUND) cout<<"\n\t!!! ADDRESS OF "<<x<<" IN ARRAY INDEX IS "<<index<<" !!!\n\t!!! AND ADDRESS OF MEMORY IS "<< &array[index]<<" !!!\n\n";
+    if(index!=ITEM_NOT_FOUND) cout<<"\n\t!!! ADDRESS OF "<<x<<" IN ARRAY INDEX IS "<<index<<" !!!\n\t!!! AND ADDRESS OF MEMORY IS "<<&array[index]<<" !!!\n\n";
     return index;
 }
 
+//////////////////////findPos////////////////////////////
 
 template<class HashedObj>
 int HashTable<HashedObj> ::findPos(const HashedObj & x ) const
@@ -130,21 +140,18 @@ int HashTable<HashedObj> ::findPos(const HashedObj & x ) const
     
     while(array[currentPos].info !=EMPTY&&array[currentPos].element != x )
     {
-        currentPos = hash(x,array.size())+(++collisionNum)* hash2(x,array.size());
+        currentPos =hash(x,array.size())+(++collisionNum)*hash2(x,array.size());
         
         if(currentPos>=array.size())
-            currentPos = currentPos % array.size();
-        
-        
-        
+            currentPos = currentPos%array.size();    //wabaround
     }
     return currentPos;
 }
 template<class HashedObj>
 int HashTable<HashedObj> ::hash2(int x,int tablesize) const
 {
-    int prime = isprime(tablesize);
-    return (prime-(x % prime));
+    int prime=isprime(tablesize);
+    return (prime-(x%prime));
 }
 
 template<class HashedObj>
@@ -166,11 +173,10 @@ int HashTable<HashedObj> ::isprime(int x) const
             prime=i;
         }
     }
-    
     return prime;
 }
 
-
+/////////////////////isActive///////////////////////////
 
 template<class HashedObj>
 bool HashTable<HashedObj>::isActive(int currentPos) const
@@ -178,7 +184,7 @@ bool HashTable<HashedObj>::isActive(int currentPos) const
     return array[currentPos].info==ACTIVE;
 }
 
-
+////////////////////insert//////////////////////////////
 
 template<class HashedObj>
 void HashTable<HashedObj>::insert(const HashedObj & x)
@@ -193,6 +199,8 @@ void HashTable<HashedObj>::insert(const HashedObj & x)
     
 }
 
+/////////////////////remove////////////////////////////
+
 template<class HashedObj>
 void HashTable<HashedObj>::remove( const HashedObj & x)
 {
@@ -201,12 +209,14 @@ void HashTable<HashedObj>::remove( const HashedObj & x)
         array[currentPos].info=DELETED;
 }
 
+///////////////////rehash////////////////////////////
+
 template <class HashedObj>
 void HashTable<HashedObj>::rehash()
 {
     vector<HashEntry> oldArray=array;
     
-    array.resize(nextPrime(2 * oldArray.size()));
+    array.resize(nextPrime(2*oldArray.size()));
     for(int j=0;j<array.size();j++)
         array[j].info=EMPTY;
     
@@ -216,6 +226,7 @@ void HashTable<HashedObj>::rehash()
             insert(oldArray[i].element);
 }
 
+//////////////////////nextPrime///////////////////////////
 
 template <class HashedObj>
 int HashTable<HashedObj>::nextPrime(int size)
@@ -227,10 +238,8 @@ int HashTable<HashedObj>::nextPrime(int size)
     else{
         i=size+1;
         bool check=false;
-        while(true)
-        {
-            for(int j=2;j<=i;j++)
-            {
+        while(true){
+            for(int j=2;j<=i;j++){
                 if(i%j==0&&j<i) break;
                 else if(i%j==0&&j==i) check = true;
             }
@@ -240,6 +249,9 @@ int HashTable<HashedObj>::nextPrime(int size)
         return i;
     }
 }
+
+
+/////////////////////hash////////////////////////////
 
 template<class HashedObj>
 int HashTable<HashedObj>::hash(const string & key,int tableSize) const
